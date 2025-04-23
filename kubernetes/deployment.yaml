@@ -19,7 +19,7 @@ spec:
         - containerPort: 8081
         volumeMounts:
         - name: model-storage
-          mountPath: /app
+          mountPath: /app/models
       volumes:
       - name: model-storage
         persistentVolumeClaim:

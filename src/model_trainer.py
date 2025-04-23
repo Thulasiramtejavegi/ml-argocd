@@ -73,7 +73,7 @@ def train_isolation_forest(X, contamination=0.1, n_estimators=100, max_samples='
     
     return model
 
-def save_model_and_scaler(model, scaler, model_path='isolation_forest_model.joblib', scaler_path='scaler.joblib'):
+def save_model_and_scaler(model, scaler, model_path='/app/models/isolation_forest_model.joblib', scaler_path='/app/models/scaler.joblib'):
     """
     Save the trained model and scaler to disk
     

@@ -9,8 +9,8 @@ import os
 app = Flask(__name__)
 
 # Load the model and scaler on startup
-MODEL_PATH = os.environ.get('MODEL_PATH', 'isolation_forest_model.joblib')
-SCALER_PATH = os.environ.get('SCALER_PATH', 'scaler.joblib')
+MODEL_PATH = os.environ.get('MODEL_PATH', '/app/models/isolation_forest_model.joblib')
+SCALER_PATH = os.environ.get('SCALER_PATH', '/app/models/scaler.joblib')
 
 try:
     model = load(MODEL_PATH)
