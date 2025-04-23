@@ -1,0 +1,18 @@
+# argo-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ml-pipeline
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thulasiramtejavegi/ml-argocd.git
+    targetRevision: HEAD
+    path: kubernetes/
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
