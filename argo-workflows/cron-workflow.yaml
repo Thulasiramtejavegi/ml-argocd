@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: ml-cron-pipeline
+spec:
+  schedule: "0 0 * * *" # Daily at midnight
+  concurrencyPolicy: "Replace"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: main-pipeline
+    volumes:
+      - name: shared-data
+        persistentVolumeClaim:
+          claimName: ml-pvc
+    templates:
+      - name: main-pipeline
+        steps:
+          - - name: generate-data
+              template: generate-data
+          - - name: train-model
+              template: train-model
+          - - name: evaluate-model
+              template: evaluate-model
+          - - name: deploy-api
+              template: deploy-api
+
+      - name: generate-data
+        container:
+          image: python:3.9-slim
+          command: [python, /app/src/data_generator.py]
+          volumeMounts:
+            - name: shared-data
+              mountPath: /app
+
+      - name: train-model
+        container:
+          image: python:3.9-slim
+          command: [python, /app/src/model_trainer.py]
+          volumeMounts:
+            - name: shared-data
+              mountPath: /app
+
+      - name: evaluate-model
+        container:
+          image: python:3.9-slim
+          command: [python, /app/src/evaluator.py]
+          volumeMounts:
+            - name: shared-data
+              mountPath: /app
+
+      - name: deploy-api
+        container:
+          image: bitnami/kubectl
+          command: [sh, -c]
+          args: ["kubectl apply -f /app/kubernetes/deployment.yaml"]
+          volumeMounts:
+            - name: shared-data
+              mountPath: /app

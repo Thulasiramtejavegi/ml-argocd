@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anomaly-detection-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anomaly-detection-api
+  template:
+    metadata:
+      labels:
+        app: anomaly-detection-api
+    spec:
+      containers:
+      - name: api
+        image: thulasiramtejavegi/anomaly-detection-api:latest
+        ports:
+        - containerPort: 8081
+        volumeMounts:
+        - name: model-storage
+          mountPath: /app
+      volumes:
+      - name: model-storage
+        persistentVolumeClaim:
+          claimName: ml-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anomaly-detection-service
+spec:
+  selector:
+    app: anomaly-detection-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+  type: LoadBalancer
